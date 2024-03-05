@@ -39,6 +39,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
       - name: Preparatory Tasks
         run: |
           REPOSITORY=`expr "${{ env.REPO_BRANCH }}" : "\([^ ]*\)"`
@@ -47,16 +52,16 @@ jobs:
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
         env:
           REPO_BRANCH: ${{ env.REPO_BRANCH }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           repository: ${{ env.REPOSITORY }}
           token: ${{ secrets[github.event.inputs.token_name] || secrets[env.TOKEN_NAME] }}
           ref: ${{ env.BRANCH }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           repository: "myactionway/lighthouse-badges"
           path: temp_lighthouse_badges_nested
-      - uses: myactionway/lighthouse-badger-action@v2.2
+      - uses: myactionway/lighthouse-badger-action@0064f8e52023fe836d42f65e71231c54a93f7d0b # v2.2
         with:
           urls: ${{ env.URLS }}
           mobile_lighthouse_params: ${{ env.MOBILE_LIGHTHOUSE_PARAMS }}
